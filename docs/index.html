@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuro-Adaptive-Ghosts-ML — Neuro Gaming Lab</title>
+    <meta name="description" content="Pacman reimagined with adaptive ghost AI—coordinated pursuit, alpha pack hunting, RL, and evolution. Pygame + ML.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d1117;
+            --bg-card: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-ghost: #a371f7;
+            --yellow: #f0c674;
+            --green: #7ee787;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Space Grotesk', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+        header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .lab-badge {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+        h1 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent-ghost) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .tagline {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .tagline strong { color: var(--yellow); }
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+        .pill {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--accent);
+            margin: 0.15rem;
+        }
+        .intro {
+            padding: 2rem 0;
+            font-size: 1rem;
+        }
+        .intro p { margin-bottom: 1rem; color: var(--text); }
+        .intro strong { color: var(--accent-ghost); }
+        .intro a { color: var(--accent); text-decoration: none; }
+        .intro a:hover { text-decoration: underline; }
+        section h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+            color: var(--text);
+        }
+        ul.features {
+            list-style: none;
+            padding: 0;
+        }
+        ul.features li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text);
+        }
+        ul.features li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--accent-ghost);
+            font-weight: 600;
+        }
+        ul.features strong { color: var(--yellow); }
+        .cta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .btn {
+            display: inline-block;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+            padding: 0.6rem 1.25rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            border: 1px solid var(--accent);
+        }
+        .btn-primary:hover { filter: brightness(1.1); }
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+        .footer-credit { margin-top: 0.5rem; }
+        .footer-tagline { font-style: italic; margin-top: 0.25rem; }
+        .footer-lab { margin-top: 1rem; color: var(--text-muted); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <p class="lab-badge">Neuro Gaming Lab</p>
+            <h1>Neuro-Adaptive-Ghosts-ML</h1>
+            <p class="tagline">Where <strong>nostalgia</strong> meets <strong>intelligence</strong></p>
+            <p class="subtitle">Reimagining Pacman with adaptive ghost AI—coordinated pursuit, alpha pack hunting, RL, and evolution. Pygame + ML.</p>
+            <div>
+                <span class="pill">ML</span>
+                <span class="pill">RL</span>
+                <span class="pill">Ghost AI</span>
+                <span class="pill">Coordinated agents</span>
+            </div>
+        </header>
+
+        <section class="intro">
+            <p>We reimagine Pacman as a living maze—where <strong>ghosts use ML</strong> to coordinate, pick an alpha leader, block escape routes, and evolve over time. Classic chase, reimagined with reinforcement learning, multi-agent coordination, and genetic evolution.</p>
+            <p><strong>Adaptive ghost agents</strong>: role-based strategies (chaser, ambusher, blocker, patrol), alpha pack hunting when you’re close, optional PPO/DQN/A2C policies, and evolutionary behavior tuning. Pacman as a testbed for emergent coordination and playable AI.</p>
+            <p>From Pygame gameplay to trained models and in-game evolution, Neuro Gaming Lab explores how learning agents master and meaningfully interact with games. <strong>Reviving the past to build the future of playable AI.</strong></p>
+        </section>
+
+        <section>
+            <h2>Features</h2>
+            <ul class="features">
+                <li><strong>Coordinated ghost AI</strong> — Chaser, ambusher, blocker, patrol; pincer moves and escape blocking.</li>
+                <li><strong>Alpha pack hunting</strong> — Closest ghost becomes alpha; others follow for a coordinated strike.</li>
+                <li><strong>RL ghost policies</strong> — Train with PPO, DQN, or A2C (Stable-Baselines3 + Gymnasium).</li>
+                <li><strong>Ghost evolution</strong> — Genetic algorithms evolve aggression, prediction, ambush, and risk tolerance.</li>
+                <li><strong>Pacman powers</strong> — Teleport (Space), super speed (S), power-pellet “fart” shockwave. Procedural mazes (G).</li>
+                <li><strong>Stack</strong> — Pygame, PyTorch, SB3, scikit-learn. Docker, Streamlit, HTML5 web version.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Run the game</h2>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">Clone the repo, install dependencies, and run the full game (Pygame) or the web version.</p>
+            <div class="cta">
+                <a href="https://github.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML#readme" class="btn btn-primary">Play / Run locally</a>
+                <a href="https://github.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML" class="btn btn-secondary">View on GitHub →</a>
+            </div>
+        </section>
+
+        <footer>
+            <p><strong>NeuroGamingLab</strong> · Design &amp; architecture: <strong>Tuệ Hoàng</strong> — AI/ML Eng.</p>
+            <p class="footer-tagline">Multi-LLM–assisted development.</p>
+            <p class="footer-lab"><a href="https://neurogaminglab.github.io/">Neuro Gaming Lab</a> · Project 2026</p>
+            <p class="footer-lab">Injecting neural networks into arcade classics.</p>
+        </footer>
+    </div>
+</body>
+</html>
