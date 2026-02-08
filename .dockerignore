@@ -1,0 +1,16 @@
+venv
+.git
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+build
+dist
+*.egg-info
+.DS_Store
+localstack-data
+*.log
+ghost_evolution.json
+models
+logs
+data

@@ -1,0 +1,53 @@
+# Training Configuration for Pacman ML Agents
+
+# Environment settings
+environment:
+  agent_type: ghost  # 'ghost' or 'pacman'
+  n_envs: 4          # Number of parallel environments
+  max_steps: 1000    # Max steps per episode
+
+# RL Agent settings
+agent:
+  algorithm: ppo     # 'ppo', 'dqn', or 'a2c'
+  device: auto       # 'auto', 'cpu', or 'cuda'
+  
+  # Hyperparameters
+  learning_rate: 0.0003
+  n_steps: 2048      # Steps per update (PPO/A2C)
+  batch_size: 64
+  n_epochs: 10       # PPO only
+  gamma: 0.99        # Discount factor
+  
+  # Network architecture
+  policy_kwargs:
+    net_arch:
+      pi: [256, 256]  # Policy network
+      vf: [256, 256]  # Value network
+
+# Training settings
+training:
+  total_timesteps: 500000
+  log_freq: 5000
+  eval_freq: 10000
+  eval_episodes: 5
+  save_freq: 50000
+
+# Unsupervised learning settings
+unsupervised:
+  # State encoder
+  state_encoder:
+    n_components: 32    # PCA components
+    n_clusters: 20      # K-Means clusters
+    use_minibatch: true # Use MiniBatch K-Means
+  
+  # Pattern learner
+  pattern_learner:
+    trajectory_length: 10
+    min_cluster_size: 5
+    use_hdbscan: false
+
+# Paths
+paths:
+  models_dir: models/
+  logs_dir: logs/
+  data_dir: data/

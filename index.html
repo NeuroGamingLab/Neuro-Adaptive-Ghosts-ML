@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacman Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-info">
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="lives">Lives: <span id="lives">3</span></div>
+        </div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="gameOver" class="game-over hidden">
+            <div id="gameOverMessage"></div>
+            <div class="restart-hint">Press R to restart</div>
+        </div>
+        <div class="instructions">
+            <p>Use Arrow Keys to move | R to restart</p>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

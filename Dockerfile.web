@@ -1,0 +1,14 @@
+# Serve the HTML5 Pacman game (no ML, runs in browser)
+# Build: docker build -f Dockerfile.web -t pacman-web .
+# Run:  docker run -p 8000:8000 pacman-web
+# Open: http://localhost:8000
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY index.html game.js style.css ./
+
+EXPOSE 8000
+
+CMD ["python3", "-m", "http.server", "8000"]
