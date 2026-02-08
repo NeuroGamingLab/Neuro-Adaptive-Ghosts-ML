@@ -104,6 +104,26 @@
             font-weight: 600;
         }
         ul.features strong { color: var(--yellow); }
+        .screenshots {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .screenshots img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .screenshots figcaption {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.35rem;
+        }
+        @media (max-width: 520px) {
+            .screenshots { grid-template-columns: 1fr; }
+        }
         .cta {
             display: flex;
             flex-wrap: wrap;
@@ -177,6 +197,28 @@
                 <li><strong>Pacman powers</strong> — Teleport (Space), super speed (S), power-pellet “fart” shockwave. Procedural mazes (G).</li>
                 <li><strong>Stack</strong> — Pygame, PyTorch, SB3, scikit-learn. Docker, Streamlit, HTML5 web version.</li>
             </ul>
+        </section>
+
+        <section>
+            <h2>Screenshots</h2>
+            <div class="screenshots">
+                <figure>
+                    <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman-1.png" alt="Pacman ML gameplay 1 — coordinated chase" loading="lazy">
+                    <figcaption>OBSERVE: Agentic Ghosts — coordinated chase</figcaption>
+                </figure>
+                <figure>
+                    <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman-2.png" alt="Pacman ML gameplay 2 — alpha pack" loading="lazy">
+                    <figcaption>Alpha pack hunting &amp; roles</figcaption>
+                </figure>
+                <figure>
+                    <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman-3.png" alt="Pacman ML gameplay 3 — power pellet" loading="lazy">
+                    <figcaption>Power pellet &amp; ghost evolution</figcaption>
+                </figure>
+                <figure>
+                    <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman-4.png" alt="Pacman ML gameplay 4 — maze" loading="lazy">
+                    <figcaption>Neural pathfinding &amp; maze</figcaption>
+                </figure>
+            </div>
         </section>
 
         <section>

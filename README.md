@@ -54,66 +54,16 @@ A classic Pacman game featuring **autonomous ML-powered agents** using Reinforce
 │                                                                            │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
-
 ---
 
-## 📁 Project Structure
+## 📸 Neuro-Adaptive-Ghosts-ML
 
-```
-pacman-ML/
-│
-├── 🎮 GAME FILES
-│   ├── main.py                 # Main game: OBSERVE Agentic Ghosts (Pygame + ML)
-│   ├── pacman.py               # Original Pygame-only version
-│   ├── index.html              # HTML5 web version
-│   ├── game.js                 # JavaScript game logic
-│   ├── style.css               # Web version styles
-│   └── streamlit_app.py        # Streamlit web app (button controls)
-│
-├── 🤖 REINFORCEMENT LEARNING
-│   ├── environments/
-│   │   ├── __init__.py
-│   │   └── pacman_env.py       # Gymnasium RL environment
-│   │
-│   └── agents/
-│       ├── __init__.py
-│       ├── ghost_agent.py      # RL agent (PPO/DQN/A2C)
-│       └── multi_agent.py      # Multi-agent coordination + alpha pack
-│
-├── 📊 UNSUPERVISED LEARNING
-│   └── unsupervised/
-│       ├── __init__.py
-│       ├── state_encoder.py    # PCA + K-Means encoder
-│       └── pattern_learner.py  # DBSCAN/HDBSCAN + LOF anomaly detection
-│
-├── 🧬 EXTRA ML (optional)
-│   └── ml/
-│       ├── __init__.py
-│       ├── maze_gan.py         # GAN/procedural maze generator
-│       ├── neural_pathfinder.py # Neural pathfinding (toggle in-game: N)
-│       └── ghost_evolution.py  # Evolutionary ghost behaviors (toggle: E)
-│
-├── 🏋️ TRAINING
-│   └── training/
-│       ├── __init__.py
-│       ├── config.yaml         # Hyperparameters
-│       ├── train_ghost.py       # Ghost agent training
-│       └── train_pacman.py     # Pacman agent training
-│
-├── 📦 ARTIFACTS (created at runtime)
-│   ├── models/                 # After training
-│   │   ├── ghost_agent/
-│   │   │   ├── best_model.zip
-│   │   │   └── final_model.zip
-│   │   └── state_encoder.pkl
-│   └── ghost_evolution.json    # Evolved ghost genomes (in-game evolution)
-│
-├── 📄 CONFIG & DEPLOY
-│   ├── requirements.txt
-│   ├── deploy.sh               # Deploy web version to LocalStack S3
-│   ├── docker-compose.yml      # LocalStack for S3
-│   └── README.md
-```
+| | |
+|:---:|:---:|
+| ![Pacman ML gameplay 1](pacman-1.png) | ![Pacman ML gameplay 2](pacman-2.png) |
+| *OBSERVE: Agentic Ghosts — coordinated chase* | *Alpha pack hunting & roles* |
+| ![Pacman ML gameplay 3](pacman-3.png) | ![Pacman ML gameplay 4](pacman-4.png) |
+| *Power pellet & ghost evolution* | *Neural pathfinding & maze* |
 
 ---
 
@@ -535,4 +485,4 @@ is_unusual = learner.is_anomaly(new_trajectory)
 **NeuroGamingLab** · Design & architecture: **Tuệ Hoàng**, AI/ML Engineer.  
 *Multi-LLM–assisted development.*
 
-This repository is maintained under the **NeuroGamingLab** GitHub organization. For local work, use the NeuroGamingLab account as the active GitHub CLI account (`gh auth status` should show NeuroGamingLab as active).
+This repository is maintained under the **NeuroGamingLab** GitHub organization.
