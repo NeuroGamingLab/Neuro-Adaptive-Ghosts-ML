@@ -80,6 +80,15 @@
         .intro strong { color: var(--accent-ghost); }
         .intro a { color: var(--accent); text-decoration: none; }
         .intro a:hover { text-decoration: underline; }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            padding: 0.15rem 0.4rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--accent);
+        }
         section h2 {
             font-size: 1.25rem;
             font-weight: 600;
@@ -214,12 +223,14 @@
                 <li><strong>RL ghost policies</strong> — Train with PPO, DQN, or A2C (Stable-Baselines3 + Gymnasium).</li>
                 <li><strong>Ghost evolution</strong> — Genetic algorithms evolve aggression, prediction, ambush, and risk tolerance.</li>
                 <li><strong>Pacman powers</strong> — Teleport (Space), super speed (S), power-pellet “fart” shockwave. Procedural mazes (G).</li>
+                <li><strong>360° play area</strong> — Torus wrap: exit top/bottom or left/right from any edge. Move North or South from any column.</li>
+                <li><strong>3D sphere view</strong> — Optional <code>--sphere-view</code>: play surface on a 3D sphere, camera follows you; ghost hunting lines in 3D. Requires PyOpenGL.</li>
                 <li><strong>Stack</strong> — Pygame, PyTorch, SB3, scikit-learn. Docker, Streamlit, HTML5 web version.</li>
             </ul>
         </section>
 
         <section>
-            <h2>Neuro Adaptive Ghosts ML</h2>
+            <h2>2D gameplay</h2>
             <div class="screenshots">
                 <figure>
                     <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman-1.png" alt="Pacman ML gameplay 1 — coordinated chase" loading="lazy">
@@ -240,6 +251,28 @@
             </div>
         </section>
 
+        <section>
+            <h2>3D sphere view</h2>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">Run with <code>--sphere-view</code> to play on a 3D sphere: the maze wraps onto the surface and the camera follows Pacman. Hunting lines show ghost targets in 3D.</p>
+            <div class="screenshots">
+                <figure>
+                    <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman3D-1.png" alt="Pacman 3D sphere 1 — play surface" loading="lazy">
+                    <figcaption>3D sphere — play surface</figcaption>
+                </figure>
+                <figure>
+                    <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman3D-2.png" alt="Pacman 3D sphere 2 — camera follows" loading="lazy">
+                    <figcaption>Camera follows player</figcaption>
+                </figure>
+                <figure>
+                    <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman3D-3.png" alt="Pacman 3D sphere 3 — hunting lines" loading="lazy">
+                    <figcaption>Hunting lines on sphere</figcaption>
+                </figure>
+                <figure>
+                    <img src="https://raw.githubusercontent.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/pacman3D-4.png" alt="Pacman 3D sphere 4 — wrap and chase" loading="lazy">
+                    <figcaption>Wrap &amp; chase in 3D</figcaption>
+                </figure>
+            </div>
+        </section>
 
         <section class="audio-section" aria-labelledby="audio-heading">
             <h2 id="audio-heading">Listen</h2>
@@ -255,7 +288,7 @@
 
         <section>
             <h2>Run the game</h2>
-            <p style="margin-bottom: 1rem; color: var(--text-muted);">Clone the repo, install dependencies, and run the full game (Pygame) or the web version.</p>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">Clone the repo, install dependencies, and run the full game (Pygame) or the web version. Use <code>--sphere-view</code> for the 3D sphere playground (requires PyOpenGL).</p>
             <div class="cta">
                 <a href="https://github.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML#readme" class="btn btn-primary">Play / Run locally</a>
                 <a href="https://github.com/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML" class="btn btn-secondary">View on GitHub →</a>

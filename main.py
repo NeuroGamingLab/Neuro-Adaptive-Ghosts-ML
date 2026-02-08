@@ -250,6 +250,24 @@ ACTION_TO_DIR = {
 }
 
 
+def wrap_position(x, y):
+    """Wrap (x, y) to torus: both horizontal and vertical wrap (360° play area)."""
+    wx = (x % GRID_WIDTH + GRID_WIDTH) % GRID_WIDTH
+    wy = (y % GRID_HEIGHT + GRID_HEIGHT) % GRID_HEIGHT
+    return wx, wy
+
+
+def torus_manhattan(ax, ay, bx, by):
+    """Manhattan distance on a torus (shortest path with wrap)."""
+    dx = (ax - bx + GRID_WIDTH) % GRID_WIDTH
+    if dx > GRID_WIDTH // 2:
+        dx -= GRID_WIDTH
+    dy = (ay - by + GRID_HEIGHT) % GRID_HEIGHT
+    if dy > GRID_HEIGHT // 2:
+        dy -= GRID_HEIGHT
+    return abs(dx) + abs(dy)
+
+
 class Maze:
     """Game maze with walls, dots, and power pellets."""
     
@@ -287,8 +305,15 @@ class Maze:
             [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         ], dtype=np.int32)
+        self._ensure_vertical_tunnel()
         self.original_grid = self.grid.copy()
         self.dots_count = np.sum((self.grid == 2) | (self.grid == 3))
+    
+    def _ensure_vertical_tunnel(self):
+        """Open entire top and bottom rows so player can move North/South (torus wrap) from any column."""
+        for col in range(GRID_WIDTH):
+            self.grid[0, col] = 0
+            self.grid[GRID_HEIGHT - 1, col] = 0
     
     def reset(self):
         self.grid = self.original_grid.copy()
@@ -297,18 +322,17 @@ class Maze:
     def load_grid(self, new_grid: np.ndarray):
         """Load a new maze grid (for procedural generation)."""
         self.grid = new_grid.copy()
-        self.original_grid = new_grid.copy()
+        self._ensure_vertical_tunnel()
+        self.original_grid = self.grid.copy()
         self.dots_count = np.sum((self.grid == 2) | (self.grid == 3))
     
     def is_wall(self, x, y):
-        if x < 0 or x >= GRID_WIDTH or y < 0 or y >= GRID_HEIGHT:
-            return True
-        return self.grid[y, x] == 1
+        wx, wy = wrap_position(x, y)
+        return self.grid[wy, wx] == 1
     
     def get_cell(self, x, y):
-        if x < 0 or x >= GRID_WIDTH or y < 0 or y >= GRID_HEIGHT:
-            return 1
-        return self.grid[y, x]
+        wx, wy = wrap_position(x, y)
+        return self.grid[wy, wx]
     
     def set_cell(self, x, y, value):
         if 0 <= x < GRID_WIDTH and 0 <= y < GRID_HEIGHT:
@@ -412,18 +436,18 @@ class Pacman:
                 if maze.is_wall(x, y):
                     continue
                 
-                # Skip current position and nearby positions
-                if abs(x - self.x) + abs(y - self.y) < 5:
+                # Skip current position and nearby positions (torus distance)
+                if torus_manhattan(x, y, self.x, self.y) < 5:
                     continue
                 
-                # Calculate minimum distance to any ghost
+                # Calculate minimum distance to any ghost (torus)
                 min_ghost_dist = float('inf')
                 for gx, gy in ghost_positions:
-                    dist = abs(x - gx) + abs(y - gy)
+                    dist = torus_manhattan(x, y, gx, gy)
                     min_ghost_dist = min(min_ghost_dist, dist)
                 
-                # Also consider distance from ghost pack center
-                pack_dist = abs(x - ghost_center_x) + abs(y - ghost_center_y)
+                # Also consider distance from ghost pack center (torus)
+                pack_dist = torus_manhattan(x, y, int(ghost_center_x), int(ghost_center_y))
                 
                 # Combined score: farther from nearest ghost + farther from pack center
                 score = min_ghost_dist + pack_dist * 0.5
@@ -491,12 +515,8 @@ class Pacman:
                 
                 nx = self.x + self.direction[0]
                 ny = self.y + self.direction[1]
-                
-                # Wrap around
-                if nx < 0:
-                    nx = GRID_WIDTH - 1
-                elif nx >= GRID_WIDTH:
-                    nx = 0
+                # Torus wrap (360°): both horizontal and vertical
+                nx, ny = wrap_position(nx, ny)
                 
                 if not maze.is_wall(nx, ny):
                     self.x = nx
@@ -610,12 +630,7 @@ class Ghost:
     def get_valid_moves(self, maze):
         valid = []
         for action, (dx, dy) in ACTION_TO_DIR.items():
-            nx = self.x + dx
-            ny = self.y + dy
-            if nx < 0:
-                nx = GRID_WIDTH - 1
-            elif nx >= GRID_WIDTH:
-                nx = 0
+            nx, ny = wrap_position(self.x + dx, self.y + dy)
             if not maze.is_wall(nx, ny):
                 valid.append(action)
         return valid
@@ -635,18 +650,18 @@ class Ghost:
             # Use ML/coordinated action
             action = ml_action
         elif self.frightened:
-            # Run away from Pacman
+            # Run away from Pacman (torus distance)
             best_dist = -1
             action = valid_moves[0]
             for a in valid_moves:
                 dx, dy = ACTION_TO_DIR[a]
-                nx, ny = self.x + dx, self.y + dy
-                dist = abs(nx - pacman.x) + abs(ny - pacman.y)
+                nx, ny = wrap_position(self.x + dx, self.y + dy)
+                dist = torus_manhattan(nx, ny, pacman.x, pacman.y)
                 if dist > best_dist:
                     best_dist = dist
                     action = a
         else:
-            # Chase Pacman with some randomness
+            # Chase Pacman with some randomness (torus distance)
             if np.random.random() < 0.2:
                 action = np.random.choice(valid_moves)
             else:
@@ -654,21 +669,15 @@ class Ghost:
                 action = valid_moves[0]
                 for a in valid_moves:
                     dx, dy = ACTION_TO_DIR[a]
-                    nx, ny = self.x + dx, self.y + dy
-                    dist = abs(nx - pacman.x) + abs(ny - pacman.y)
+                    nx, ny = wrap_position(self.x + dx, self.y + dy)
+                    dist = torus_manhattan(nx, ny, pacman.x, pacman.y)
                     if dist < best_dist:
                         best_dist = dist
                         action = a
         
-        # Move
+        # Move (torus wrap: 360° horizontal and vertical)
         dx, dy = ACTION_TO_DIR[action]
-        nx = self.x + dx
-        ny = self.y + dy
-        
-        if nx < 0:
-            nx = GRID_WIDTH - 1
-        elif nx >= GRID_WIDTH:
-            nx = 0
+        nx, ny = wrap_position(self.x + dx, self.y + dy)
         
         if not maze.is_wall(nx, ny):
             self.x = nx
@@ -679,12 +688,24 @@ class Ghost:
         self.frightened = True
         self.frightened_timer = duration
     
-    def draw(self, screen):
+    def draw(self, screen, pacman=None):
         cx = GAME_OFFSET_X + self.x * CELL_SIZE + CELL_SIZE // 2
         cy = GAME_OFFSET_Y + self.y * CELL_SIZE + CELL_SIZE // 2
         radius = CELL_SIZE // 2 - 2
         
         color = BLUE if self.frightened else self.color
+        
+        # Hunting line: ghost → target (coordinated) or ghost → Pacman
+        if not self.frightened:
+            tx, ty = None, None
+            if self.target is not None:
+                tx, ty = self.target[0], self.target[1]
+            elif pacman is not None:
+                tx, ty = pacman.x, pacman.y
+            if tx is not None and ty is not None:
+                end_x = GAME_OFFSET_X + tx * CELL_SIZE + CELL_SIZE // 2
+                end_y = GAME_OFFSET_Y + ty * CELL_SIZE + CELL_SIZE // 2
+                pygame.draw.line(screen, color, (cx, cy), (end_x, end_y), 2)
         
         # ALPHA GHOST: Draw multi-color blinking circle!
         if self.is_alpha and not self.frightened:
@@ -725,22 +746,35 @@ class Ghost:
         pygame.draw.circle(screen, BLACK, (cx + 3, cy - 4), 1)
         
         
-        # Draw target line if coordinated (for debugging)
-        if self.target and not self.frightened:
-            tx = GAME_OFFSET_X + self.target[0] * CELL_SIZE + CELL_SIZE // 2
-            ty = GAME_OFFSET_Y + self.target[1] * CELL_SIZE + CELL_SIZE // 2
-            pygame.draw.line(screen, color, (cx, cy), (tx, ty), 1)
+        # (Hunting line drawn above, before alpha ring)
 
 
 class Game:
     """Main game class with ML agent support and coordinated ghost attacks."""
     
-    def __init__(self, use_ml_ghosts=False, ghost_model_path=None, coordinated=True):
+    def __init__(self, use_ml_ghosts=False, ghost_model_path=None, coordinated=True, sphere_view=False):
         if not HAS_PYGAME:
             raise ImportError("pygame is required. Install with: pip install pygame")
         
         pygame.init()
-        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.use_sphere_view = False
+        self.sphere_view = None
+        if sphere_view:
+            try:
+                from sphere_view import SphereView, has_opengl
+                if not has_opengl():
+                    print("Warning: PyOpenGL not available. Install with: pip install PyOpenGL PyOpenGL-accelerate")
+                else:
+                    self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
+                    self.sphere_view = SphereView(WINDOW_WIDTH, WINDOW_HEIGHT)
+                    self.sphere_view.init_gl()
+                    self.use_sphere_view = True
+                    print("Sphere view: ON (play area on 3D sphere, camera follows you)")
+            except Exception as e:
+                print(f"Sphere view failed: {e}. Falling back to 2D.")
+                self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        if not self.use_sphere_view:
+            self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("OBSERVE: Agentic Ghosts Intelligence")
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 36)
@@ -1005,9 +1039,9 @@ class Game:
             self.fart_kills = 0
             self.sound.play('fart')  # FART SOUND!
             
-            # Kill all ghosts within radius (1/2 board width)
+            # Kill all ghosts within radius (1/2 board width); use torus distance
             for i, ghost in enumerate(self.ghosts):
-                dist = abs(ghost.x - self.pacman.x) + abs(ghost.y - self.pacman.y)
+                dist = torus_manhattan(ghost.x, ghost.y, self.pacman.x, self.pacman.y)
                 if dist <= self.fart_radius:
                     # Ghost is in the fart zone - ELIMINATED!
                     ghost.reset()
@@ -1125,6 +1159,15 @@ class Game:
     
     def draw(self):
         """Draw the game."""
+        # 3D sphere view (camera follows player)
+        if self.use_sphere_view and self.sphere_view:
+            self.sphere_view.draw_frame(self.maze, self.pacman, self.ghosts)
+            pygame.display.set_caption(
+                f"OBSERVE: Agentic Ghosts | Score: {self.score} | Lives: {self.lives} | [2D: run without --sphere-view]"
+            )
+            pygame.display.flip()
+            return
+        
         self.screen.fill(BLACK)
         
         # === TITLE BAR (top) ===
@@ -1281,7 +1324,7 @@ class Game:
         if not self.game_over:
             self.pacman.draw(self.screen)
             for ghost in self.ghosts:
-                ghost.draw(self.screen)
+                ghost.draw(self.screen, self.pacman)
         
         # UI - Bottom bar (updated Y position)
         bar_y = TITLE_BAR_HEIGHT + GAME_HEIGHT + 5
@@ -1378,6 +1421,7 @@ def main():
     parser.add_argument('--model', type=str, default='models/ghost_agent/best_model.zip',
                        help='Path to trained ghost model')
     parser.add_argument('--no-coord', action='store_true', help='Disable coordinated ghost attacks')
+    parser.add_argument('--sphere-view', action='store_true', help='Render play area on a 3D sphere (camera follows player); requires PyOpenGL')
     args = parser.parse_args()
     
     print("=" * 60)
@@ -1393,6 +1437,9 @@ def main():
     print("💡 Powers: 3 charges each, cooldown between uses")
     print("   ⚡ Teleport - Instant escape to safe location")
     print("   🏃 Speed   - Move 2x faster for 5 seconds")
+    print()
+    print("🌐 360° WRAP: Play area wraps like a sphere (torus)—exit")
+    print("   top to appear at bottom, left to right; no hard edges!")
     print()
     print("💨 POWER FART: Eat a power pellet to release a deadly")
     print("   shockwave that eliminates ALL ghosts within half")
@@ -1417,6 +1464,8 @@ def main():
     
     if args.ml:
         print(f"\n🤖 ML Ghosts: Enabled (model: {args.model})")
+    if args.sphere_view:
+        print("\n🌐 Sphere view: Play on a 3D sphere (install PyOpenGL if prompted)")
     
     print("\n" + "=" * 60)
     print()
@@ -1424,7 +1473,8 @@ def main():
     game = Game(
         use_ml_ghosts=args.ml, 
         ghost_model_path=args.model,
-        coordinated=not args.no_coord
+        coordinated=not args.no_coord,
+        sphere_view=args.sphere_view,
     )
     game.run()
 

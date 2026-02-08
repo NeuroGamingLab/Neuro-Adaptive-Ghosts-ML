@@ -58,12 +58,23 @@ A classic Pacman game featuring **autonomous ML-powered agents** using Reinforce
 
 ## 📸 Neuro-Adaptive-Ghosts-ML
 
+### 2D gameplay
+
 | | |
 |:---:|:---:|
 | ![Pacman ML gameplay 1](pacman-1.png) | ![Pacman ML gameplay 2](pacman-2.png) |
 | *OBSERVE: Agentic Ghosts — coordinated chase* | *Alpha pack hunting & roles* |
 | ![Pacman ML gameplay 3](pacman-3.png) | ![Pacman ML gameplay 4](pacman-4.png) |
 | *Power pellet & ghost evolution* | *Neural pathfinding & maze* |
+
+### 3D sphere view (`--sphere-view`)
+
+| | |
+|:---:|:---:|
+| ![Pacman 3D sphere 1](pacman3D-1.png) | ![Pacman 3D sphere 2](pacman3D-2.png) |
+| *3D sphere — play surface* | *Camera follows player* |
+| ![Pacman 3D sphere 3](pacman3D-3.png) | ![Pacman 3D sphere 4](pacman3D-4.png) |
+| *Hunting lines on sphere* | *Wrap & chase in 3D* |
 
 ---
 
@@ -255,6 +266,8 @@ The main game runs as **OBSERVE: Agentic Ghosts Intelligence** with coordinated 
 
 ```bash
 python3 main.py
+# or use the launcher (activates venv if present):
+./run-pacman.sh
 ```
 
 **Pygame controls:**
@@ -271,6 +284,32 @@ python3 main.py
 | **E** | Evolution stats; double-press to force evolve |
 
 **Game features:** Power pellets trigger a “power fart” shockwave that eliminates ghosts within half the board width (+400 pts per ghost). By default, ghosts use **coordinated attack** (chaser, ambusher, blocker, patrol) and **alpha pack hunting** (closest ghost leads). Disable coordination with `--no-coord`.
+
+#### 360° play area (torus wrap)
+
+The play area wraps like a **torus**: exit the top to appear at the bottom, exit the bottom to appear at the top, and left/right wrap as well. You can move **North** (up) or **South** (down) from any column at the top or bottom row. No hard edges.
+
+#### Ghost hunting lines
+
+When ghosts are not frightened, **hunting lines** are drawn from each ghost to its target (coordinated mode) or to Pacman (non-coordinated). These lines appear in both the 2D view and the 3D sphere view.
+
+#### 3D sphere view (optional)
+
+The play surface can be rendered on a **3D sphere** with the camera following the player, so the world rotates as you move.
+
+```bash
+# Install OpenGL support (optional)
+pip install PyOpenGL PyOpenGL-accelerate
+
+# Run in 3D sphere view
+python3 main.py --sphere-view
+# or
+./run-pacman.sh --sphere-view
+```
+
+- The maze, dots, Pacman, and ghosts are drawn on the sphere; the camera stays behind Pacman so the view rotates with movement.
+- Hunting lines are shown in 3D from each ghost to Pacman (or to their coordination target).
+- Score and lives appear in the window title. Without PyOpenGL, the game falls back to the normal 2D view.
 
 ### Train ML Agents
 
@@ -393,7 +432,8 @@ Step 15000: Mean reward = 25.78, Mean length = 456
 
 | Version | Command | Controls | ML / coordination |
 |---------|---------|----------|-------------------|
-| Pygame (default) | `python3 main.py` | Arrows, Space, S, G, R, M, N, E | Coordinated ghosts + optional neural/evolution |
+| Pygame (default) | `python3 main.py` or `./run-pacman.sh` | Arrows, Space, S, G, R, M, N, E | Coordinated ghosts + optional neural/evolution |
+| **Pygame 3D sphere** | `python3 main.py --sphere-view` | Same | Same; play on a 3D sphere (requires PyOpenGL) |
 | Pygame + ML ghosts | `python3 main.py --ml --model models/ghost_agent/best_model.zip` | Same | One RL ghost + rule-based others |
 | Pygame, no coordination | `python3 main.py --no-coord` | Same | Simple chase / neural only |
 | HTML5 | `python3 -m http.server 8000` then open `index.html` | Arrow keys | ❌ No |
@@ -473,7 +513,7 @@ is_unusual = learner.is_anomaly(new_trajectory)
 | RL Framework | Stable-Baselines3 | PPO, DQN, A2C |
 | RL Interface | Gymnasium | Environment wrapper |
 | Unsupervised | Scikit-learn | PCA, K-Means, DBSCAN, LOF |
-| Game Engine | Pygame | Desktop game (main.py) |
+| Game Engine | Pygame | Desktop game (main.py); optional 3D sphere view (sphere_view.py, PyOpenGL) |
 | Web | HTML5 Canvas + JS | Browser game (index.html, game.js) |
 | Dashboard | Streamlit | Web app (optional: `pip install streamlit`) |
 | Deploy | LocalStack S3 + deploy.sh | Static hosting for web version |
