@@ -124,6 +124,25 @@
         @media (max-width: 520px) {
             .screenshots { grid-template-columns: 1fr; }
         }
+        .audio-section { margin: 2rem 0; }
+        .audio-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        .audio-player {
+            width: 100%;
+            max-width: 100%;
+            margin-top: 0.5rem;
+        }
+        .audio-link {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+        .audio-link:hover { text-decoration: underline; }
         .cta {
             display: flex;
             flex-wrap: wrap;
@@ -220,6 +239,19 @@
                 </figure>
             </div>
         </section>
+
+
+        <section class="audio-section" aria-labelledby="audio-heading">
+            <h2 id="audio-heading">Listen</h2>
+            <p class="audio-label">Neuro Adaptive Ghosts ML — Arcade Classics</p>
+            <audio class="audio-player" controls preload="metadata">
+              <source src="https://media.githubusercontent.com/media/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/Pacman_Ghosts_Evolve_Into_Alpha_Pack_Hunters.m4a" type="audio/mp4">
+              <p>Your browser does not support the audio element. <a href="https://media.githubusercontent.com/media/NeuroGamingLab/Neuro-Adaptive-Ghosts-ML/main/Pacman_Ghosts_Evolve_Into_Alpha_Pack_Hunters.m4a" class="audio-link" target="_blank" rel="noopener">Download / open audio</a>.</p>
+            </audio>
+          </section>
+      
+
+
 
         <section>
             <h2>Run the game</h2>
